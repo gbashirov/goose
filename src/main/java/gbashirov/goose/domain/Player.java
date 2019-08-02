@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 
 public class Player {
   
+  public static final int START_SPACE = 1;
   public static final int END_SPACE = 63;
   
   private static final String ERR_EMPTY_NAME = "Player name may not be empty";
@@ -25,10 +26,10 @@ public class Player {
   
   public void move(int n) {
     int s = space + n;
-    if (s <= 0 || s > END_SPACE) {
+    if (s < START_SPACE || s > END_SPACE) {
       throw new IllegalArgumentException(MessageFormat.format(ERR_SPACE_OUTSIDE, name, s));
     }
-    space = space + n;
+    space = s;
   }
   
   @Override
