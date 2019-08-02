@@ -1,19 +1,35 @@
 package gbashirov.goose.domain;
 
+import java.text.MessageFormat;
+
 public class Player {
   
+  public static final int END_SPACE = 63;
+  
   private static final String ERR_EMPTY_NAME = "Player name may not be empty";
+  private static final String ERR_SPACE_OUTSIDE = "Player {0} moved to the invalid space {1}";
 
   private final String name;
+  private int space;
   
   public Player(String name) {
     if (name == null || name.trim().isEmpty()) {
       throw new IllegalArgumentException(ERR_EMPTY_NAME);
     }
     this.name = name;
+    this.space = 1;
   }
   
   public String name() { return name; }
+  public int space() { return space; }
+  
+  public void move(int n) {
+    int s = space + n;
+    if (s <= 0 || s > END_SPACE) {
+      throw new IllegalArgumentException(MessageFormat.format(ERR_SPACE_OUTSIDE, name, s));
+    }
+    space = space + n;
+  }
   
   @Override
   public String toString() {
