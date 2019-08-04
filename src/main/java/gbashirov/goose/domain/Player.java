@@ -4,14 +4,12 @@ import java.text.MessageFormat;
 
 public class Player {
   
-  public static final int START_SPACE = 1;
-  public static final int END_SPACE = 63;
-  
   private static final String ERR_EMPTY_NAME = "Player name may not be empty";
   private static final String ERR_SPACE_OUTSIDE = "Player {0} moved to the invalid space {1}";
 
   private final String name;
   private int space;
+  private int spaceOld;
   
   public Player(String name) {
     if (name == null || name.trim().isEmpty()) {
@@ -19,17 +17,22 @@ public class Player {
     }
     this.name = name.trim();
     this.space = 1;
+    this.spaceOld = 1;
   }
   
   public String name() { return name; }
   public int space() { return space; }
+  public int previous() { return spaceOld; }
   
+  /** 
+   * @param n Destination space
+   */
   public void move(int n) {
-    int s = space + n;
-    if (s < START_SPACE || s > END_SPACE) {
-      throw new IllegalArgumentException(MessageFormat.format(ERR_SPACE_OUTSIDE, name, s));
+    if (n < Move.FIRST_SPACE || n > Move.LAST_SPACE) {
+      throw new IllegalArgumentException(MessageFormat.format(ERR_SPACE_OUTSIDE, name, n));
     }
-    space = s;
+    spaceOld = space;
+    space = n;
   }
   
   @Override

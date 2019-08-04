@@ -14,7 +14,7 @@ public class PlayerTest {
   @Before
   public void setup() {
     pippo = new Player("Pippo");
-    pippo.move(PIPPO_SPACE - 1);
+    pippo.move(PIPPO_SPACE);
   }
 
   @Test
@@ -28,31 +28,14 @@ public class PlayerTest {
     assertEquals(new Player("PiPPo"), pippo);
   }
   
-  @Test
-  public void moveBackward() {
-    final int n = -3;
-    pippo.move(n);
-    assertEquals(PIPPO_SPACE + n, pippo.space());
-  }
-  
-  @Test
-  public void moveTwoTimes() {
-    final int n = 3;
-    final int m = 2;
-    pippo.move(n);
-    assertEquals(PIPPO_SPACE + n, pippo.space());
-    pippo.move(m);
-    assertEquals(PIPPO_SPACE + n + m, pippo.space());
-  }
-  
   @Test(expected=IllegalArgumentException.class)
   public void moveOutsideStart() {
-    pippo.move(-1 - PIPPO_SPACE);
+    pippo.move(0);
   }
   
   @Test(expected=IllegalArgumentException.class)
   public void moveOutsideEnd() {
-    pippo.move(Player.END_SPACE);
+    pippo.move(Move.LAST_SPACE+1);
   }
 
 }
