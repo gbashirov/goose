@@ -17,7 +17,7 @@ public class Player {
     if (name == null || name.trim().isEmpty()) {
       throw new IllegalArgumentException(ERR_EMPTY_NAME);
     }
-    this.name = name;
+    this.name = name.trim();
     this.space = 1;
   }
   
