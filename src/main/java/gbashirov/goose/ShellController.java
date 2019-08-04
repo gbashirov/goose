@@ -3,6 +3,7 @@ package gbashirov.goose;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -20,6 +21,7 @@ public class ShellController {
   public static final String CMD_ADD = "add player";
   
   public static final String MSG_PLAYERS = "players: ";
+  public static final String MSG_PLAYER_EXISTS = "{0}: already existing player";
   
   private final Scanner in;
   private final PrintStream out;
@@ -35,8 +37,13 @@ public class ShellController {
     while (in.hasNextLine()) {
       List<String> command =  splitCommand(in.nextLine());
       if (matchCommand(command.get(0) + SEPARATOR + command.get(1), CMD_ADD)) {
-        game.add(new Player(command.get(2)));
-        printPlayers();
+        Player p = new Player(command.get(2));
+        boolean added = game.add(p);
+        if (added) {
+          printPlayers();
+        } else {
+          out.println(MessageFormat.format(MSG_PLAYER_EXISTS, p.name()));
+        }
       }
     }
   }
