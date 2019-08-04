@@ -1,13 +1,10 @@
 package gbashirov.goose;
 
-/**
- * Hello world!
- *
- */
 public class App {
 
   public static void main(String[] args) {
-    System.out.println("Hello World!");
+      ShellController c = new ShellController(System.in, System.out);
+      c.execute();
   }
 
 }
