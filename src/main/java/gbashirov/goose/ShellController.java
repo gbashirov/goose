@@ -60,17 +60,19 @@ public class ShellController {
         if (matchCommand(command, 0, CMD_ADD) && matchCommand(command, 1, CMD_ADD_PLAYER)) {
           game.add(command.get(2));
         } else if (matchCommand(command, 0, CMD_MOVE)) {
-          int d1 = Integer.parseInt(command.get(2));
-          int d2 = Integer.parseInt(command.get(3));
-          game.move(command.get(1), d1, d2);
+          if (command.size() > 2) {
+            int d1 = Integer.parseInt(command.get(2));
+            int d2 = Integer.parseInt(command.get(3));
+            game.move(command.get(1), d1, d2);
+          }
+          game.move(command.get(1));
         }
       } catch (IllegalArgumentException e) {
         e.printStackTrace(out);
       }
       for (Event e : game.events(gameOffset)) {
         gameOffset = gameOffset + 1;
-        String m = message(e);
-        out.print(m.endsWith(DOT) ? m.substring(0, m.length()-1) : m);
+        out.print(message(e));
         out.print(SPACE);
         if (e instanceof PlayerWinsEvent) {
            System.exit(0);

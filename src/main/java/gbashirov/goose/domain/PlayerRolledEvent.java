@@ -6,10 +6,10 @@ public class PlayerRolledEvent implements Event {
   private final int diceOne;
   private final int diceTwo;
   
-  public PlayerRolledEvent(Player p, int d1, int d2) {
+  public PlayerRolledEvent(Player p, Move m) {
     this.player = p.name();
-    this.diceOne = d1;
-    this.diceTwo = d2;
+    this.diceOne = m.diceOne();
+    this.diceTwo = m.diceTwo();
   }
   
   public String player() { return player; }

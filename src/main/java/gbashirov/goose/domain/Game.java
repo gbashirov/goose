@@ -50,11 +50,17 @@ public class Game {
   }
   
   public void move(String player, int diceOne, int diceTwo) {
-    Player p = player(player);
     Move m = new Move(diceOne, diceTwo);
+    move(player, m);
+  }
+  public void move(String player) {
+    move(player, new Move());
+  }
+  private void move(String player, Move m) {
+    Player p = player(player);
+    events.add(new PlayerRolledEvent(p, m));
     m.apply(p);
-    events.add(new PlayerRolledEvent(p, diceOne, diceTwo));
-    if (m.bounce(p)) {
+    if (m.bounced(p)) {
       events.add(new PlayerMovedEvent(p, false));
       events.add(new PlayerMovedEvent(p, true));
     } else {
@@ -73,5 +79,5 @@ public class Game {
     }
     return ws.size() > 0 ? Optional.of(ws.get(0)) : Optional.empty();
   }
-
+  
 }
