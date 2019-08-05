@@ -1,12 +1,15 @@
 package gbashirov.goose.domain;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Move {
   
   public static final int FIRST_SPACE = 0;
   public static final int LAST_SPACE = 63;
+  public static final int BRIDGE_SPACE = 6;
   
   private static final int DICE_MIN = 1;
   private static final int DICE_MAX = 6;
@@ -32,13 +35,26 @@ public class Move {
   public int diceOne() { return diceOne; }
   public int diceTwo() { return diceTwo; }
   
-  public final void apply(Player p) {
+  public final List<Event> apply(Player p) {
+    List<Event> es = new ArrayList<Event>();
     int s = p.space() + val;
+    bounced = false;
     if (p.space() + val > LAST_SPACE) {
       s = LAST_SPACE - (s - LAST_SPACE);
       bounced = true;
     }
     p.move(s);
+    if (bounced) {
+      es.add(new PlayerMovedEvent(p, false));
+      es.add(new PlayerMovedEvent(p, true));
+    } else if (p.space() == BRIDGE_SPACE) {
+      es.add(new PlayerMovedEvent(p));
+      p.move(BRIDGE_SPACE * 2);
+      es.add(new PlayerMovedEvent(p));
+    } else {
+      es.add(new PlayerMovedEvent(p));
+    }
+    return es;
   }
   
   public boolean bounced(Player p) {

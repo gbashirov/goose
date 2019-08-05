@@ -59,13 +59,7 @@ public class Game {
   private void move(String player, Move m) {
     Player p = player(player);
     events.add(new PlayerRolledEvent(p, m));
-    m.apply(p);
-    if (m.bounced(p)) {
-      events.add(new PlayerMovedEvent(p, false));
-      events.add(new PlayerMovedEvent(p, true));
-    } else {
-      events.add(new PlayerMovedEvent(p));
-    }
+    events.addAll(m.apply(p));
     Optional<Player> w = winner();
     if (w.isPresent()) {
       events.add(new PlayerWinsEvent(p));

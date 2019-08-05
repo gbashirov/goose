@@ -35,6 +35,7 @@ public class ShellController {
   public static final String MSG_ROLL= "{0} rolls {1}, {2}.";
   public static final String MSG_MOVED = "{0} moves from {1} to {2}.";
   public static final String MSG_BOUNCE = "{0} bounces! {0} returns to {1}.";
+  public static final String MSG_BRIDGE = "{0} jumps to {1}.";
   
   public static final String MSG_WIN = "{0} Wins!!";
   
@@ -64,8 +65,9 @@ public class ShellController {
             int d1 = Integer.parseInt(command.get(2));
             int d2 = Integer.parseInt(command.get(3));
             game.move(command.get(1), d1, d2);
+          } else {
+            game.move(command.get(1));
           }
-          game.move(command.get(1));
         }
       } catch (IllegalArgumentException e) {
         e.printStackTrace(out);
@@ -95,8 +97,14 @@ public class ShellController {
       PlayerMovedEvent pe = (PlayerMovedEvent) e;
       if (pe.bounce()) {
         return MessageFormat.format(MSG_BOUNCE, e.player(), pe.end());
+      } else if (pe.start() == Move.FIRST_SPACE) {
+        return MessageFormat.format(MSG_MOVED, e.player(), "Start", pe.end());
+      } else if (pe.end() == Move.BRIDGE_SPACE) {
+        return MessageFormat.format(MSG_MOVED, e.player(), pe.start(), "The Bridge");
+      } else if (pe.start() == Move.BRIDGE_SPACE) {
+        return MessageFormat.format(MSG_BRIDGE, e.player(), pe.end());
       }
-      return MessageFormat.format(MSG_MOVED, e.player(), pe.start() == Move.FIRST_SPACE ? "Start" : pe.start(), pe.end());
+      return MessageFormat.format(MSG_MOVED, e.player(), pe.start(), pe.end());
     } else if (e instanceof PlayerWinsEvent) {
       return MessageFormat.format(MSG_WIN, e.player());
     } else {
