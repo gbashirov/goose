@@ -17,8 +17,9 @@ public class ShellControllerTest {
   
   @Test
   public void commandMatchIgnoreCase() {
-    boolean match = ShellController.matchCommand("add plAyer  ", "ADD player");
-    assertTrue(match);
+    List<String> command = ShellController.splitCommand("add plAyer  ");
+    assertTrue(ShellController.matchCommand(command, 0, "ADD"));
+    assertTrue(ShellController.matchCommand(command, 1, "player"));
   }
   
 }

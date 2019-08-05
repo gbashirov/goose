@@ -2,6 +2,8 @@ package gbashirov.goose.domain;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,20 +18,22 @@ public class GameTest {
   
   @Before
   public void setup() {
-    pippo = new Player(PIPPO_NAME);
-    pippo.move(PIPPO_SPACE);
     game = new Game();
-    game.add(pippo);
+    pippo = game.add(PIPPO_NAME);
+    pippo.move(PIPPO_SPACE);
   }
   
   @Test
   public void addNewPlayer() {
-    assertTrue(game.add(new Player(PLUTO_NAME)));
+    game.add(PLUTO_NAME);
+    assertTrue(game.events(0).get(0) instanceof PlayerAddedEvent);
   }
   
   @Test
   public void preventDuplicatePlayer() {
-    assertFalse(game.add(new Player(PIPPO_NAME)));
+    game.add(PIPPO_NAME);
+    List<Event> es = game.events(1);
+    assertTrue(es.get(0) instanceof PlayerNotAddedEvent);
   }
   
   @Test

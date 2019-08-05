@@ -11,32 +11,59 @@ public class Game {
   private static final String ERR_WINNER = "More than one winner";
   
   private final List<Player> players;
+  private final List<Event> events;
   
   public Game() {
    this.players = new ArrayList<Player>();
+   this.events = new ArrayList<Event>();
+  }
+  
+  public List<Event> events(int offset) {
+    List<Event> es;
+    if (offset >= events.size()) {
+      es = Collections.emptyList();
+    } else {
+      es = events.subList(offset, events.size());
+    }
+    return es;
   }
   
   public List<Player> players() { return Collections.unmodifiableList(players); }
   
   /**
-   * @return <code>false</code> if player already exists
+   * @return <code>null</code> if player already exists
    */
-  public boolean add(Player p) {
+  public Player add(String name) {
+    Player p = new Player(name);
     if (players.contains(p)) {
-      return false;
+      events.add(new PlayerNotAddedEvent(p));
+      return null;
+    } else {
+      players.add(p);
+      events.add(new PlayerAddedEvent(p));
+      return p;
     }
-    players.add(p);
-    return true;
   }
   
   private Player player(String name) {
     return players.stream().filter(p -> p.name().equalsIgnoreCase(name)).findFirst().get();
   }
   
-  public Player move(String player, int diceOne, int diceTwo) {
+  public void move(String player, int diceOne, int diceTwo) {
+    Move m = new Move(diceOne, diceTwo);
+    move(player, m);
+  }
+  public void move(String player) {
+    move(player, new Move());
+  }
+  private void move(String player, Move m) {
     Player p = player(player);
-    new Move(diceOne, diceTwo).apply(p);
-    return p;
+    events.add(new PlayerRolledEvent(p, m));
+    events.addAll(m.apply(p));
+    Optional<Player> w = winner();
+    if (w.isPresent()) {
+      events.add(new PlayerWinsEvent(p));
+    }
   }
   
   public Optional<Player> winner() {
@@ -46,5 +73,5 @@ public class Game {
     }
     return ws.size() > 0 ? Optional.of(ws.get(0)) : Optional.empty();
   }
-
+  
 }

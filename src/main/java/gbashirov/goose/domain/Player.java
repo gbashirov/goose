@@ -16,8 +16,8 @@ public class Player {
       throw new IllegalArgumentException(ERR_EMPTY_NAME);
     }
     this.name = name.trim();
-    this.space = 1;
-    this.spaceOld = 1;
+    this.space = Move.FIRST_SPACE;
+    this.spaceOld = Move.FIRST_SPACE;
   }
   
   public String name() { return name; }
@@ -28,7 +28,7 @@ public class Player {
    * @param n Destination space
    */
   public void move(int n) {
-    if (n < Move.FIRST_SPACE || n > Move.LAST_SPACE) {
+    if (n < Move.FIRST_SPACE + 1|| n > Move.LAST_SPACE) {
       throw new IllegalArgumentException(MessageFormat.format(ERR_SPACE_OUTSIDE, name, n));
     }
     spaceOld = space;
