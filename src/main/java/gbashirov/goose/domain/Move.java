@@ -18,7 +18,6 @@ public class Move {
   private final int diceOne;
   private final int diceTwo;
   private final int val;
-  private Boolean bounced;
   
   public Move(int d1, int d2) {
     this.diceOne = d1;
@@ -35,30 +34,23 @@ public class Move {
   public int diceOne() { return diceOne; }
   public int diceTwo() { return diceTwo; }
   
-  public final List<Event> apply(Player p) {
-    List<Event> es = new ArrayList<Event>();
+  public final List<PlayerMovedEvent> apply(Player p) {
+    List<PlayerMovedEvent> es = new ArrayList<PlayerMovedEvent>();
     int s = p.space() + val;
-    bounced = false;
     if (p.space() + val > LAST_SPACE) {
-      s = LAST_SPACE - (s - LAST_SPACE);
-      bounced = true;
-    }
-    p.move(s);
-    if (bounced) {
-      es.add(new PlayerMovedEvent(p, false));
-      es.add(new PlayerMovedEvent(p, true));
-    } else if (p.space() == BRIDGE_SPACE) {
+      p.move(LAST_SPACE);
       es.add(new PlayerMovedEvent(p));
-      p.move(BRIDGE_SPACE * 2);
+      p.move(LAST_SPACE - (s - LAST_SPACE));
       es.add(new PlayerMovedEvent(p));
     } else {
+      p.move(s);
+      es.add(new PlayerMovedEvent(p));
+    }
+    if (p.space() == BRIDGE_SPACE) {
+      p.move(BRIDGE_SPACE * 2);
       es.add(new PlayerMovedEvent(p));
     }
     return es;
-  }
-  
-  public boolean bounced(Player p) {
-    return bounced;
   }
   
   private static boolean checkValidDice(int d) {

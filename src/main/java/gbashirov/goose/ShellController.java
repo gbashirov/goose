@@ -95,7 +95,7 @@ public class ShellController {
       return MessageFormat.format(MSG_ROLL, e.player(), pe.diceOne(), pe.diceTwo());
     } else if (e instanceof PlayerMovedEvent) {
       PlayerMovedEvent pe = (PlayerMovedEvent) e;
-      if (pe.bounce()) {
+      if (pe.start() == Move.LAST_SPACE) {
         return MessageFormat.format(MSG_BOUNCE, e.player(), pe.end());
       } else if (pe.start() == Move.FIRST_SPACE) {
         return MessageFormat.format(MSG_MOVED, e.player(), "Start", pe.end());
