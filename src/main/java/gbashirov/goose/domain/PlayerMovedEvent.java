@@ -12,8 +12,8 @@ public class PlayerMovedEvent implements Event {
     this.player = p.name();
     this.diceOne = d1;
     this.diceTwo = d2;
-    this.start = p.space();
-    this.end = p.previous();
+    this.start = p.previous();
+    this.end = p.space();
   }
   
   public String player() { return player; }

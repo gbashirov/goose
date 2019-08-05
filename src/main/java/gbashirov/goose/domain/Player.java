@@ -16,8 +16,8 @@ public class Player {
       throw new IllegalArgumentException(ERR_EMPTY_NAME);
     }
     this.name = name.trim();
-    this.space = 1;
-    this.spaceOld = 1;
+    this.space = Move.FIRST_SPACE;
+    this.spaceOld = Move.FIRST_SPACE;
   }
   
   public String name() { return name; }

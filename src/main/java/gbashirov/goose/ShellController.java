@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import gbashirov.goose.domain.Event;
 import gbashirov.goose.domain.Game;
+import gbashirov.goose.domain.Move;
 import gbashirov.goose.domain.PlayerAddedEvent;
 import gbashirov.goose.domain.PlayerMovedEvent;
 import gbashirov.goose.domain.PlayerNotAddedEvent;
@@ -81,7 +82,7 @@ public class ShellController {
       return MessageFormat.format(MSG_PLAYER_EXISTS, ((PlayerNotAddedEvent) e).player());
     } else if (e instanceof PlayerMovedEvent) {
       PlayerMovedEvent pe = (PlayerMovedEvent) e;
-      return MessageFormat.format(MSG_MOVED, e.player(), pe.diceOne(), pe.diceTwo(), pe.start() == 1 ? "Start" : pe.start(), pe.end());
+      return MessageFormat.format(MSG_MOVED, e.player(), pe.diceOne(), pe.diceTwo(), pe.start() == Move.FIRST_SPACE ? "Start" : pe.start(), pe.end());
     } else if (e instanceof PlayerWinsEvent) {
       return MessageFormat.format(MSG_WIN, e.player());
     } else {

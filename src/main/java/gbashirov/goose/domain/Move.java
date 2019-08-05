@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 
 public class Move {
   
-  public static final int FIRST_SPACE = 1;
+  public static final int FIRST_SPACE = 0;
   public static final int LAST_SPACE = 63;
   
   private static final int DICE_MIN = 1;
