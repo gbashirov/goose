@@ -1,6 +1,6 @@
 package gbashirov.goose.domain;
 
-public class PlayerRolledEvent implements Event {
+public class PlayerRolledEvent implements PlayerEvent {
   
   private final String player;
   private final int diceOne;

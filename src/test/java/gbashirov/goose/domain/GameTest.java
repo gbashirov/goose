@@ -32,7 +32,7 @@ public class GameTest {
   @Test
   public void preventDuplicatePlayer() {
     game.add(PIPPO_NAME);
-    List<Event> es = game.events(1);
+    List<PlayerEvent> es = game.events(1);
     assertTrue(es.get(0) instanceof PlayerNotAddedEvent);
   }
   

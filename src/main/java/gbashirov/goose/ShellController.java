@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import gbashirov.goose.domain.Event;
+import gbashirov.goose.domain.PlayerEvent;
 import gbashirov.goose.domain.Game;
 import gbashirov.goose.domain.Move;
 import gbashirov.goose.domain.PlayerAddedEvent;
@@ -75,7 +75,7 @@ public class ShellController {
       } catch (IllegalArgumentException e) {
         e.printStackTrace(out);
       }
-      for (Event e : game.events(gameOffset)) {
+      for (PlayerEvent e : game.events(gameOffset)) {
         gameOffset = gameOffset + 1;
         out.print(message(e));
         out.print(SPACE);
@@ -87,7 +87,7 @@ public class ShellController {
     }
   }
   
-  private String message(Event e) {
+  private String message(PlayerEvent e) {
     if (e instanceof PlayerAddedEvent) {
       String players = game.players().stream().map(p -> p.name()).collect(Collectors.joining(", "));
       return MSG_PLAYERS  + players;

@@ -1,6 +1,6 @@
 package gbashirov.goose.domain;
 
-public interface Event {
+public interface PlayerEvent {
   
   String player();
   

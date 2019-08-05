@@ -11,15 +11,15 @@ public class Game {
   private static final String ERR_WINNER = "More than one winner";
   
   private final List<Player> players;
-  private final List<Event> events;
+  private final List<PlayerEvent> events;
   
   public Game() {
    this.players = new ArrayList<Player>();
-   this.events = new ArrayList<Event>();
+   this.events = new ArrayList<PlayerEvent>();
   }
   
-  public List<Event> events(int offset) {
-    List<Event> es;
+  public List<PlayerEvent> events(int offset) {
+    List<PlayerEvent> es;
     if (offset >= events.size()) {
       es = Collections.emptyList();
     } else {

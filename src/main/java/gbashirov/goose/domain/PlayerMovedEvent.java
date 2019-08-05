@@ -1,6 +1,6 @@
 package gbashirov.goose.domain;
 
-public class PlayerMovedEvent implements Event {
+public class PlayerMovedEvent implements PlayerEvent {
   
   private final String player;
   private final int start;
