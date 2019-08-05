@@ -6,12 +6,15 @@ import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import gbashirov.goose.domain.Event;
 import gbashirov.goose.domain.Game;
-import gbashirov.goose.domain.Player;
+import gbashirov.goose.domain.PlayerAddedEvent;
+import gbashirov.goose.domain.PlayerMovedEvent;
+import gbashirov.goose.domain.PlayerNotAddedEvent;
+import gbashirov.goose.domain.PlayerWinsEvent;
 
 public class ShellController {
   
@@ -27,49 +30,67 @@ public class ShellController {
   public static final String MSG_PLAYERS = "players: ";
   public static final String MSG_PLAYER_EXISTS = "{0}: already existing player";
   public static final String MSG_MOVED = "{0} rolls {1}, {2}. {0} moves from {3} to {4}";
-  public static final String MSG_WIN = " {0} Wins!!";
+  public static final String MSG_WIN = "{0} Wins!!";
   
   private final Scanner in;
   private final PrintStream out;
   private final Game game;
+  private int gameOffset;
   
   public ShellController(Game game, InputStream in, OutputStream out) {
+    this(game, 0, in, out);
+  }
+  public ShellController(Game game, int gameOffset, InputStream in, OutputStream out) {
     this.in = new Scanner(in);
     this.out = new PrintStream(out);
     this.game = game;
+    this.gameOffset = gameOffset;
   }
   
   public final void execute() {
     while (in.hasNextLine()) {
       List<String> command =  splitCommand(in.nextLine());
       try {
-        if (matchCommand(command.get(0), CMD_ADD) && matchCommand(command.get(1), CMD_ADD_PLAYER)) {
-          Player p = new Player(command.get(2));
-          boolean added = game.add(p);
-          if (added) {
-            printPlayers();
-          } else {
-            out.print(MessageFormat.format(MSG_PLAYER_EXISTS, p.name()));
-          }
-        } else if (matchCommand(command.get(0), CMD_MOVE)) {
+        if (matchCommand(command, 0, CMD_ADD) && matchCommand(command, 1, CMD_ADD_PLAYER)) {
+          game.add(command.get(2));
+        } else if (matchCommand(command, 0, CMD_MOVE)) {
           int d1 = Integer.parseInt(command.get(2));
           int d2 = Integer.parseInt(command.get(3));
-          Player p = game.move(command.get(1), d1, d2);
-          out.print(MessageFormat.format(MSG_MOVED, p.name(), d1, d2, p.previous(), p.space()));
+          game.move(command.get(1), d1, d2);
         }
       } catch (IllegalArgumentException e) {
         e.printStackTrace(out);
       }
-      Optional<Player> w = game.winner();
-      if (w.isPresent()) {
-        out.print(MessageFormat.format(MSG_WIN, w.get().name()));
+      for (Event e : game.events(gameOffset)) {
+        gameOffset = gameOffset + 1;
+        out.print(message(e));
+        out.print(SPACE);
+        if (e instanceof PlayerWinsEvent) {
+           System.exit(0);
+        }
       }
       out.print(System.lineSeparator());
     }
   }
   
-  protected static final boolean matchCommand(String actual, String expected) {
-    return actual != null && actual.trim().toUpperCase().startsWith(expected.trim().toUpperCase());
+  private String message(Event e) {
+    if (e instanceof PlayerAddedEvent) {
+      String players = game.players().stream().map(p -> p.name()).collect(Collectors.joining(", "));
+      return MSG_PLAYERS  + players;
+    } else if (e instanceof PlayerNotAddedEvent) {
+      return MessageFormat.format(MSG_PLAYER_EXISTS, ((PlayerNotAddedEvent) e).player());
+    } else if (e instanceof PlayerMovedEvent) {
+      PlayerMovedEvent pe = (PlayerMovedEvent) e;
+      return MessageFormat.format(MSG_MOVED, e.player(), pe.diceOne(), pe.diceTwo(), pe.start() == 1 ? "Start" : pe.start(), pe.end());
+    } else if (e instanceof PlayerWinsEvent) {
+      return MessageFormat.format(MSG_WIN, e.player());
+    } else {
+      throw new UnsupportedOperationException(e.getClass().toString());
+    }
+  }
+  
+  protected static final boolean matchCommand(List<String> actual, int n, String expected) {
+    return n < actual.size() && actual.get(n) != null && actual.get(n).trim().toUpperCase().startsWith(expected.trim().toUpperCase());
   }
   
   protected static final List<String> splitCommand(String command) {
@@ -81,9 +102,4 @@ public class ShellController {
     return a;
   }
   
-  private final void printPlayers() {
-    String players = game.players().stream().map(p -> p.name()).collect(Collectors.joining(", "));
-    out.print(MSG_PLAYERS  + players);
-  }
-
 }

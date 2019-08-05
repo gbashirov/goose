@@ -13,10 +13,9 @@ public class WinnerTest {
   
   public static void main(String[] args) {
     Game g = new Game();
-    Player p = new Player("Pippo");
-    g.add(p);
+    Player p = g.add("Pippo");
     p.move(Move.LAST_SPACE - 2);
-    ShellController c = new ShellController(g, System.in, System.out);
+    ShellController c = new ShellController(g, 1, System.in, System.out);
     c.execute();
   }
 
