@@ -25,10 +25,14 @@ public class Move {
   
   public final void apply(Player p) {
     int s = p.space() + val;
-    if (s > LAST_SPACE) {
+    if (bounce(p)) {
       s = LAST_SPACE - (s - LAST_SPACE);
     }
     p.move(s);
+  }
+  
+  public boolean bounce(Player p) {
+    return p.space() + val > LAST_SPACE;
   }
   
   private static boolean checkValidDice(int d) {

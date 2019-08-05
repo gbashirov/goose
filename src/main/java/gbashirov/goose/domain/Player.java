@@ -28,7 +28,7 @@ public class Player {
    * @param n Destination space
    */
   public void move(int n) {
-    if (n < Move.FIRST_SPACE || n > Move.LAST_SPACE) {
+    if (n < Move.FIRST_SPACE + 1|| n > Move.LAST_SPACE) {
       throw new IllegalArgumentException(MessageFormat.format(ERR_SPACE_OUTSIDE, name, n));
     }
     spaceOld = space;

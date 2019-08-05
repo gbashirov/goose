@@ -15,6 +15,7 @@ import gbashirov.goose.domain.Move;
 import gbashirov.goose.domain.PlayerAddedEvent;
 import gbashirov.goose.domain.PlayerMovedEvent;
 import gbashirov.goose.domain.PlayerNotAddedEvent;
+import gbashirov.goose.domain.PlayerRolledEvent;
 import gbashirov.goose.domain.PlayerWinsEvent;
 
 public class ShellController {
@@ -22,6 +23,7 @@ public class ShellController {
   public static final String SEPARATOR = " ";
   public static final String SPACE = " ";
   public static final String COMMA = ",";
+  public static final String DOT = ".";
   public static final String EMPTY_STRING = "";
   
   public static final String CMD_ADD = "add";
@@ -29,8 +31,11 @@ public class ShellController {
   public static final String CMD_MOVE = "move";
   
   public static final String MSG_PLAYERS = "players: ";
-  public static final String MSG_PLAYER_EXISTS = "{0}: already existing player";
-  public static final String MSG_MOVED = "{0} rolls {1}, {2}. {0} moves from {3} to {4}";
+  public static final String MSG_PLAYER_EXISTS = "{0}: already existing player.";
+  public static final String MSG_ROLL= "{0} rolls {1}, {2}.";
+  public static final String MSG_MOVED = "{0} moves from {1} to {2}.";
+  public static final String MSG_BOUNCE = "{0} bounces! {0} returns to {1}.";
+  
   public static final String MSG_WIN = "{0} Wins!!";
   
   private final Scanner in;
@@ -64,7 +69,8 @@ public class ShellController {
       }
       for (Event e : game.events(gameOffset)) {
         gameOffset = gameOffset + 1;
-        out.print(message(e));
+        String m = message(e);
+        out.print(m.endsWith(DOT) ? m.substring(0, m.length()-1) : m);
         out.print(SPACE);
         if (e instanceof PlayerWinsEvent) {
            System.exit(0);
@@ -80,9 +86,15 @@ public class ShellController {
       return MSG_PLAYERS  + players;
     } else if (e instanceof PlayerNotAddedEvent) {
       return MessageFormat.format(MSG_PLAYER_EXISTS, ((PlayerNotAddedEvent) e).player());
+    } else if (e instanceof PlayerRolledEvent) {
+      PlayerRolledEvent pe = (PlayerRolledEvent) e;
+      return MessageFormat.format(MSG_ROLL, e.player(), pe.diceOne(), pe.diceTwo());
     } else if (e instanceof PlayerMovedEvent) {
       PlayerMovedEvent pe = (PlayerMovedEvent) e;
-      return MessageFormat.format(MSG_MOVED, e.player(), pe.diceOne(), pe.diceTwo(), pe.start() == Move.FIRST_SPACE ? "Start" : pe.start(), pe.end());
+      if (pe.bounce()) {
+        return MessageFormat.format(MSG_BOUNCE, e.player(), pe.end());
+      }
+      return MessageFormat.format(MSG_MOVED, e.player(), pe.start() == Move.FIRST_SPACE ? "Start" : pe.start(), pe.end());
     } else if (e instanceof PlayerWinsEvent) {
       return MessageFormat.format(MSG_WIN, e.player());
     } else {

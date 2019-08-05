@@ -51,8 +51,15 @@ public class Game {
   
   public void move(String player, int diceOne, int diceTwo) {
     Player p = player(player);
-    new Move(diceOne, diceTwo).apply(p);
-    events.add(new PlayerMovedEvent(p, diceOne, diceTwo));
+    Move m = new Move(diceOne, diceTwo);
+    m.apply(p);
+    events.add(new PlayerRolledEvent(p, diceOne, diceTwo));
+    if (m.bounce(p)) {
+      events.add(new PlayerMovedEvent(p, false));
+      events.add(new PlayerMovedEvent(p, true));
+    } else {
+      events.add(new PlayerMovedEvent(p));
+    }
     Optional<Player> w = winner();
     if (w.isPresent()) {
       events.add(new PlayerWinsEvent(p));
