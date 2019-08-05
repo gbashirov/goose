@@ -36,6 +36,9 @@ public class ShellController {
   public static final String MSG_MOVED = "{0} moves from {1} to {2}.";
   public static final String MSG_BOUNCE = "{0} bounces! {0} returns to {1}.";
   public static final String MSG_BRIDGE = "{0} jumps to {1}.";
+  public static final String MSG_GOOSE_MATCH = "{0} moves from {1} to {2}, The Goose.";
+  public static final String MSG_GOOSE_MATCH_AGAIN = "{0} moves again and goes to {1}, The Goose.";
+  public static final String MSG_GOOSE_JUMP = "{0} moves again and goes to {1}.";
   
   public static final String MSG_WIN = "{0} Wins!!";
   
@@ -95,16 +98,21 @@ public class ShellController {
       return MessageFormat.format(MSG_ROLL, e.player(), pe.diceOne(), pe.diceTwo());
     } else if (e instanceof PlayerMovedEvent) {
       PlayerMovedEvent pe = (PlayerMovedEvent) e;
+      String start = Move.FIRST_SPACE == pe.start() ? "Start" : String.valueOf(pe.start());
       if (pe.start() == Move.LAST_SPACE) {
         return MessageFormat.format(MSG_BOUNCE, e.player(), pe.end());
-      } else if (pe.start() == Move.FIRST_SPACE) {
-        return MessageFormat.format(MSG_MOVED, e.player(), "Start", pe.end());
       } else if (pe.end() == Move.BRIDGE_SPACE) {
-        return MessageFormat.format(MSG_MOVED, e.player(), pe.start(), "The Bridge");
+        return MessageFormat.format(MSG_MOVED, e.player(), start, "The Bridge");
       } else if (pe.start() == Move.BRIDGE_SPACE) {
         return MessageFormat.format(MSG_BRIDGE, e.player(), pe.end());
+      } else if (Move.GOOSE_SPACES.contains(pe.start()) && Move.GOOSE_SPACES.contains(pe.end())) {
+        return MessageFormat.format(MSG_GOOSE_MATCH_AGAIN, e.player(), pe.end());
+      } else if (Move.GOOSE_SPACES.contains(pe.end())) {
+        return MessageFormat.format(MSG_GOOSE_MATCH, e.player(), start, pe.end());
+      } else if (Move.GOOSE_SPACES.contains(pe.start())) {
+        return MessageFormat.format(MSG_GOOSE_JUMP, e.player(), pe.end());
       }
-      return MessageFormat.format(MSG_MOVED, e.player(), pe.start(), pe.end());
+      return MessageFormat.format(MSG_MOVED, e.player(), start, pe.end());
     } else if (e instanceof PlayerWinsEvent) {
       return MessageFormat.format(MSG_WIN, e.player());
     } else {
